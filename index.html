@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Portfolio</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .container { width: 80%; margin: auto; }
+        input[type="text"] {
+            width: 50%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid black; padding: 10px; text-align: left; }
+        th { background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>My Courses</h2>
+        <input type="text" id="searchBar" placeholder="Search courses..." onkeyup="filterCourses()">
+        <table>
+            <thead>
+                <tr>
+                    <th>Year Level</th>
+                    <th>Semester</th>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th>Credit</th>
+                </tr>
+            </thead>
+            <tbody id="courses-table"></tbody>
+        </table>
+    </div>
+    <script>
+        let coursesData = [];
+        fetch('courses.json')
+            .then(response => response.json())
+            .then(data => {
+                coursesData = data.courses;
+                displayCourses(coursesData);
+            })
+            .catch(error => console.error('Error fetching JSON:', error));
+        
+        function displayCourses(courses) {
+            let tableBody = document.getElementById("courses-table");
+            tableBody.innerHTML = "";
+            courses.forEach(course => {
+                let row = `<tr>
+                    <td>${course.year_level}</td>
+                    <td>${course.sem}</td>
+                    <td>${course.code}</td>
+                    <td>${course.description}</td>
+                    <td>${course.credit}</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        }
+        
+        function filterCourses() {
+            let query = document.getElementById("searchBar").value.toLowerCase();
+            let filteredCourses = coursesData.filter(course => 
+                course.year_level.toLowerCase().includes(query) ||
+                course.sem.toLowerCase().includes(query) ||
+                course.code.toLowerCase().includes(query) ||
+                course.description.toLowerCase().includes(query) ||
+                course.credit.toLowerCase().includes(query)
+            );
+            displayCourses(filteredCourses);
+        }
+    </script>
+</body>
+</html>
